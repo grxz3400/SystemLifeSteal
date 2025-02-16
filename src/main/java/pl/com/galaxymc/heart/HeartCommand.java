@@ -1,4 +1,4 @@
-package pl.com.galaxymc;
+package pl.com.galaxymc.heart;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.Command;
@@ -8,13 +8,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
+import pl.com.galaxymc.util.InventoryUtils;
 
+// Obsługa komendy /heart
 public class HeartCommand implements CommandExecutor {
-    private final HeartSystem heartSystem;
-
-    public HeartCommand(HeartSystem heartSystem) {
-        this.heartSystem = heartSystem;
-    }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
@@ -29,20 +26,17 @@ public class HeartCommand implements CommandExecutor {
             return true;
         }
 
-        // Sprawdź czy gracz ma miejsce w ekwipunku
-        PlayerInventory inventory = player.getInventory();
-        if (inventory.firstEmpty() == -1) {
-            player.sendMessage(Component.text("§cTwój ekwipunek jest pełny!"));
+        // Utwórz serce i sprawdź czy gracz ma miejsce w ekwipunku
+        ItemStack heartItem = HeartItem.createHeartItem();
+
+        if (!InventoryUtils.canAddItems(player, heartItem, 1, HeartItem.KEY)) {
+            player.sendMessage("§cNie masz wystarczająco miejsca w ekwipunku!");
             return true;
         }
 
-        // Utwórz serce
-        ItemStack heartItem = heartSystem.createHeartItem();
-
         // Dodaj serce do ekwipunku
-        inventory.addItem(heartItem);
+        InventoryUtils.addItems(player, heartItem, 1, HeartItem.KEY);
         player.sendMessage(Component.text("§aDodano serce do twojego ekwipunku!"));
-
         return true;
     }
 }

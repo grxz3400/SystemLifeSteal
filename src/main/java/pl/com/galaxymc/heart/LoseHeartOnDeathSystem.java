@@ -1,4 +1,4 @@
-package pl.com.galaxymc;
+package pl.com.galaxymc.heart;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -16,15 +16,9 @@ import java.util.Date;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-public class DeathSystem implements Listener {
+public class LoseHeartOnDeathSystem implements Listener {
 
     private static final int BAN_TIME_IN_MINUTES = 30;
-
-    private final HeartSystem heartSystem;
-
-    public DeathSystem(Plugin plugin, HeartSystem heartSystem) {
-        this.heartSystem = heartSystem;
-    }
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
@@ -36,18 +30,20 @@ public class DeathSystem implements Listener {
             return;
         }
 
-        // Zmniejsz maksymalne zdrowie ofiary o 2 (1 serce)
-        double newVictimHealth = Math.max(2.0, victimHealth.getBaseValue() - 2.0);
-        victimHealth.setBaseValue(newVictimHealth);
+        // Policz nową liczbę serc
+        double newVictimHealth = victimHealth.getBaseValue() - 2;
 
-        // Sprawdź czy gracz ma 0 serc (2.0 to minimum w Minecraft)
-        if (newVictimHealth <= 2.0) {
+        // Sprawdź czy gracz miałby 0 serc, jeśli tak to zbanuj
+        if (newVictimHealth < 2) {
             handleZeroHearts(victim, victimHealth);
+        } else {
+            // Zmniejsz maksymalne zdrowie ofiary o 2 (1 serce)
+            victimHealth.setBaseValue(newVictimHealth);
+            // Wyślij wiadomości do ofiary
+            victim.sendMessage("§c-1 §fserce! Twoje maksymalne zdrowie wynosi teraz: " + (int) (newVictimHealth / 2) + " serc");
         }
 
-        // Wyślij wiadomości do ofiary
-        victim.sendMessage("§c-1 §fserce! Twoje maksymalne zdrowie wynosi teraz: " + newVictimHealth / 2 + " serc");
-
+        // Dodaj serce zabójcy
         if (killer != null) {
             handlePlayerKill(victim, killer);
         }
@@ -61,7 +57,7 @@ public class DeathSystem implements Listener {
                 expirationDate, null);
 
         // Wyrzuć gracza z serwera
-        victim.kick(Component.text("§cStracileś wszystkie serca! Zostałeś zbanowany na " + BAN_TIME_IN_MINUTES + " minut."));
+        victim.kick(Component.text("§cStraciłeś wszystkie serca! Zostałeś zbanowany na " + BAN_TIME_IN_MINUTES + " minut."));
 
         // Po powrocie gracz dostanie 5 serc (10.0 punktów zdrowia)
         victimHealth.setBaseValue(10.0);
@@ -70,7 +66,7 @@ public class DeathSystem implements Listener {
     private void handlePlayerKill(Player victim, Player killer) {
         // Upuść serce na ziemię w miejscu śmierci
         Location deathLocation = victim.getLocation();
-        ItemStack heartItem = heartSystem.createHeartItem();
+        ItemStack heartItem = HeartItem.createHeartItem();
         deathLocation.getWorld().dropItemNaturally(deathLocation, heartItem);
 
         // Powiadom zabójcę

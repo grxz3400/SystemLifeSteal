@@ -3,30 +3,34 @@ package pl.com.galaxymc;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import pl.com.galaxymc.heart.HeartCommand;
+import pl.com.galaxymc.heart.HeartUseSystem;
+import pl.com.galaxymc.heart.LoseHeartOnDeathSystem;
+import pl.com.galaxymc.heart.WithdrawHeartsCommand;
 
 import java.util.Objects;
 
-public final class SystemLifeSteal extends JavaPlugin implements Listener {
-    private HeartSystem heartSystem;
-    private DeathSystem deathSystem;
+public class SystemLifeSteal extends JavaPlugin implements Listener {
+    private HeartUseSystem heartUseSystem;
+    private LoseHeartOnDeathSystem loseHeartOnDeathSystem;
 
     @Override
     public void onEnable() {
         // Inicjalizacja systemów
-        this.heartSystem = new HeartSystem(this);
-        this.deathSystem = new DeathSystem(this, heartSystem);
+        this.heartUseSystem = new HeartUseSystem();
+        this.loseHeartOnDeathSystem = new LoseHeartOnDeathSystem();
 
         // Rejestracja listenerów
         Bukkit.getPluginManager().registerEvents(this, this);
-        getServer().getPluginManager().registerEvents(heartSystem, this);
-        getServer().getPluginManager().registerEvents(deathSystem, this);
+        getServer().getPluginManager().registerEvents(heartUseSystem, this);
+        getServer().getPluginManager().registerEvents(loseHeartOnDeathSystem, this);
 
-        // Rejestracja komendy
-        Objects.requireNonNull(getCommand("serce")).setExecutor(new HeartCommand(heartSystem));
+        // Rejestracja komend
+        Objects.requireNonNull(getCommand("serce")).setExecutor(new HeartCommand());
+        Objects.requireNonNull(getCommand("wyplacserca")).setExecutor(new WithdrawHeartsCommand());
 
         getLogger().info("SystemLifeSteal Plugin zostal wlaczony!");
     }

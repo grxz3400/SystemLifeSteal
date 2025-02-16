@@ -10,7 +10,16 @@ commands:
     permission: lifesteal.serce
     permission-message: §cNie masz uprawnień do użycia tej komendy!
 
+  wyplacserca:
+    description: Wypłaca określoną liczbę serc do ekwipunku
+    usage: /wyplacserca <liczba>
+    permission: lifesteal.wyplac
+    permission-message: §cNie masz uprawnień do użycia tej komendy!
+
 permissions:
   lifesteal.serce:
     description: Pozwala na użycie komendy /serce
     default: op
+  lifesteal.wyplac:
+    description: Pozwala na użycie komendy /wyplacserca
+    default: player
