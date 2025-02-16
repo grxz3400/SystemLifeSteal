@@ -2,3 +2,15 @@ name: SystemLifeSteal
 version: '1.0-SNAPSHOT'
 main: pl.com.galaxymc.SystemLifeSteal
 api-version: '1.18'
+
+commands:
+  serce:
+    description: Dodaje serce do ekwipunku
+    usage: /<command>
+    permission: lifesteal.serce
+    permission-message: §cNie masz uprawnień do użycia tej komendy!
+
+permissions:
+  lifesteal.serce:
+    description: Pozwala na użycie komendy /serce
+    default: op
