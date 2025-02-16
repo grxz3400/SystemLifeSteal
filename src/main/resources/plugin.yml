@@ -1,0 +1,4 @@
+name: SystemLifeSteal
+version: '1.0-SNAPSHOT'
+main: pl.com.galaxymc.SystemLifeSteal
+api-version: '1.18'
