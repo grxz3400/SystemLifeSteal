@@ -47,3 +47,28 @@ processResources {
         expand props
     }
 }
+
+tasks.register('runServer') {
+    dependsOn jar
+    group = 'run'
+    description = 'Builds the plugin and copies it to the server'
+
+    doLast {
+        copy {
+            from jar
+            into "C:/LifeSteal/plugins"
+        }
+
+        // Start the server with debug enabled
+        exec {
+            workingDir 'C:/LifeSteal'
+            commandLine 'java',
+                    '-Xmx4G',
+                    '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005',
+                    '-jar',
+                    'paper-1.18.2-388.jar',
+                    '--nogui'
+            standardInput = System.in
+        }
+    }
+}
